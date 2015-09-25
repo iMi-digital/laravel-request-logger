@@ -8,7 +8,7 @@ PHP already provides the `session.use_trans_sid` configuration value for this, b
 Installation
 ------------
 
-1. Install `imi/laravel-transsid` via composer.
+1. Install `imi/laravel-request-logger` via composer.
 2. Insert iMi\laravel-request-logger\RequestLoggerServiceProvider::class into providers in your config/app.php
 3. Insert iMi\laravel-request-logger\LogRequest::class into middleware in your app/Http/Kernel.php
 
