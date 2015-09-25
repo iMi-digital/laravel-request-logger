@@ -13,5 +13,9 @@ class RequestLoggerServiceProvider extends ServiceProvider
         $this->publishes([$filename => database_path('2015_09_25_111650_create_request_log_entries_table.php')], 'migrations');
     }
 
+    public function register()
+    {
+
+    }
 
 }
