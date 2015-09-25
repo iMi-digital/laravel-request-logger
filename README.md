@@ -1,16 +1,22 @@
-Encode Session IDs in URLs for Laravel 5 Projects (Transparent SID)
+Logs Requests for Laravel 5 Projects
 ===================================================================
 
-This module adds support for keeping session IDs (as normally stored in session cookies) to all URLs.
-This is especially useful if your application runs in Iframe as some browser block cookies in those.
-PHP already provides the `session.use_trans_sid` configuration value for this, but as Laravel 5 is implementing sessions in its on way, our module is necessary.
+This module adds Log requests for following data:
+    method
+    path
+    ip
+    session
+    get
+    post
+    cookies
+    agent
 
 Installation
 ------------
 
 1. Install `imi/laravel-request-logger` via composer.
-2. Insert iMi\laravel-request-logger\RequestLoggerServiceProvider::class into providers in your config/app.php
-3. Insert iMi\laravel-request-logger\LogRequest::class into middleware in your app/Http/Kernel.php
+2. Insert `iMi\laravel-request-logger\RequestLoggerServiceProvider::class` into providers in your config/app.php
+3. Insert `iMi\laravel-request-logger\LogRequest::class` into middleware in your app/Http/Kernel.php
 
 About Us
 ========
