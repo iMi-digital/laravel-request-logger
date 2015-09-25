@@ -1,0 +1,17 @@
+{
+    "name": "imi/laravel-request-logger",
+    "description": "Log requests to database for Laravel 5 Projects",
+    "license": "GPL",
+    "authors": [
+        {
+            "name": "iMi digital GmbH - Marcel Hammerschmidt",
+            "email": "m.hammerschmidt@imi.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "iMi\\LaravelTransSid\\": "src/"
+        }
+    },
+    "require": {}
+}
