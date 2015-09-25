@@ -10,7 +10,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "iMi\\laravel-request-logger\\": "src/"
+            "iMi\\LaravelRequestLogger\\": "src/"
         }
     },
     "require": {}
