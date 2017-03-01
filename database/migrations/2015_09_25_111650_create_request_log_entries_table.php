@@ -18,11 +18,11 @@ class CreateRequestLogEntriesTable extends Migration
             $table->string('method', 4);
             $table->text('path');
             $table->string('ip', 45);
-            $table->string('session');
-            $table->text('get');
-            $table->text('post');
-            $table->text('cookies');
-            $table->string('agent');
+            $table->string('session')->nullable();
+            $table->text('get')->nullable();
+            $table->text('post')->nullable();
+            $table->text('cookies')->nullable();
+            $table->string('agent')->nullable();
         });
     }
 
