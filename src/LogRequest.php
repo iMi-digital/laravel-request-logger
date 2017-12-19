@@ -32,7 +32,11 @@ class LogRequest
             $entry->cookies = var_export($cookies, true);
         }
         $entry->agent = $request->server('HTTP_USER_AGENT');
-        $entry->session = $request->session()->getId();
+        
+        if ($request->hasSession()) {
+            $entry->session = $request->session()->getId();
+        }
+        
         $entry->save();
         return $next($request);
     }
