@@ -13,5 +13,12 @@
             "iMi\\LaravelRequestLogger\\": "src/"
         }
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "iMi\\LaravelRequestLogger\\RequestLoggerServiceProvider"
+            ]
+        }
+    },
     "require": {}
 }
