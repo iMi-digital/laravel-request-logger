@@ -20,6 +20,11 @@ Installation
 4. Call `php artisan vendor:publish`
 5. Call `php artisan migrate`
 
+Similar Modules
+---------------
+
+* https://github.com/spatie/laravel-http-logger
+
 About Us
 ========
 
