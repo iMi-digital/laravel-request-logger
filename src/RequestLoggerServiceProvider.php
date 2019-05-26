@@ -9,9 +9,8 @@ class RequestLoggerServiceProvider extends ServiceProvider
     public function boot()
     {
         if ($this->app->runningInConsole()) {
-            $filename = 'migrations/2015_09_25_111650_create_request_log_entries_table.php';
             $this->publishes(
-                [__DIR__ . '/../database/' . $filename => database_path($filename)],
+                [__DIR__ . '/../database/migrations/' => database_path('migrations/')],
                 'migrations'
             );
 
