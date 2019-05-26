@@ -17,7 +17,7 @@ Installation
 ------------
 
 1. Install `imi/laravel-request-logger` via composer.
-2. Insert `iMi\LaravelRequestLogger\RequestLoggerServiceProvider::class` into providers in your config/app.php
+2. Optional - if your Laravel version does not yet support autodiscovery: Insert `iMi\LaravelRequestLogger\RequestLoggerServiceProvider::class` into providers in your config/app.php
 3. Insert `iMi\LaravelRequestLogger\LogRequest::class` into middleware in your app/Http/Kernel.php
 4. Call `php artisan vendor:publish`
 5. Call `php artisan migrate`
