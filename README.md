@@ -1,7 +1,8 @@
 Logs Requests for Laravel 5 Projects
 ===================================================================
 
-This module adds Log requests for following data:
+This module logs requests for following data to a database table.
+
 * method
 * path
 * ip
