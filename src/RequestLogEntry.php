@@ -32,9 +32,9 @@ class RequestLogEntry extends Model
         'path' => 'string',
         'method' => 'string',
         'agent' => 'string',
-        'get' => 'string',
-        'post' => 'string',
-        'cookies' => 'string',
+        'get' => 'json',
+        'post' => 'json',
+        'cookies' => 'json',
         'session' => 'string'
     ];
 
