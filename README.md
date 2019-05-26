@@ -2,14 +2,16 @@ Logs Requests for Laravel 5 Projects
 ===================================================================
 
 This module adds Log requests for following data:
-    method
-    path
-    ip
-    session
-    get
-    post
-    cookies
-    agent
+* method
+* path
+* ip
+* session
+* get
+* post
+* cookies
+* agent
+
+It is possible to exclude certain private fields through configuration (contributed by [@AgelxNash](https://github.com/AgelxNash)) 
 
 Installation
 ------------
