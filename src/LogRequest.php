@@ -24,19 +24,27 @@ class LogRequest
     {
 
         if (! $this->isExceptRequest($request)) {
-            (new RequestLogEntry)->forceFill([
-                'ip' => $request->getClientIp(),
-                'path' => urldecode($request->path()),
-                'method' => $request->getMethod(),
-                'agent' => $request->server('HTTP_USER_AGENT'),
-                'get' => $this->get($request),
-                'post' => $this->post($request),
-                'cookies' => $this->cookies($request),
-                'session' => $this->session($request)
-            ])->save();
+            RequestLogEntry::create($this->getData());
         }
 
         return $next($request);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getData() : array
+    {
+        return [
+            'ip' => $request->getClientIp(),
+            'path' => urldecode($request->path()),
+            'method' => $request->getMethod(),
+            'agent' => $request->server('HTTP_USER_AGENT'),
+            'get' => $this->get($request),
+            'post' => $this->post($request),
+            'cookies' => $this->cookies($request),
+            'session' => $this->session($request)
+        ];
     }
 
     /**
@@ -53,45 +61,49 @@ class LogRequest
     }
 
     /**
-     * @param \Illuminate\Http\Request $request
-     * @return string|null
+     * @param array $data
+     * @return array|null
      */
-    protected function get($request) : ?string
+    protected function export(array $data = []) : ?array
     {
-        $get = Arr::except($request->query->all(), $this->getExceptGet());
-        if (count($get) > 0) {
-            return var_export($get, true);
+        if (count($data) === 0) {
+            return null;
         }
 
-        return null;
+        return $data;
     }
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return string|null
+     * @return array|null
      */
-    protected function post($request) : ?string
+    protected function get($request) : ?array
     {
-        $post = Arr::except($request->request->all(), $this->getExceptPost());
-        if (count($post) > 0) {
-            return var_export($post, true);
-        }
-
-        return null;
+        return $this->export(
+            Arr::except($request->query->all(), $this->getExceptGet())
+        );
     }
 
     /**
      * @param \Illuminate\Http\Request $request
-     * @return string|null
+     * @return array|null
      */
-    protected function cookies($request) : ?string
+    protected function post($request) : ?array
     {
-        $cookies = Arr::except($request->cookies->all(), $this->getExceptCookies());
-        if (count($cookies) > 0) {
-            return var_export($cookies, true);
-        }
+        return $this->export(
+            Arr::except($request->request->all(), $this->getExceptPost())
+        );
+    }
 
-        return null;
+    /**
+     * @param \Illuminate\Http\Request $request
+     * @return array|null
+     */
+    protected function cookies($request) : ?array
+    {
+        return $this->export(
+            Arr::except($request->cookies->all(), $this->getExceptCookies())
+        );
     }
 
     /**
