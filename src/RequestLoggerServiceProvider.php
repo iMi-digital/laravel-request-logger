@@ -8,18 +8,8 @@ class RequestLoggerServiceProvider extends ServiceProvider
 {
     public function boot()
     {
-        if ($this->app->runningInConsole()) {
-            $this->publishes(
-                [__DIR__ . '/../database/migrations/' => database_path('migrations/')],
-                'migrations'
-            );
-
-            $filename = 'request-logger.php';
-            $this->publishes(
-                [__DIR__ . '/../config/' . $filename => config_path($filename)],
-                'config'
-            );
-        }
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations/');
+        $this->app['router']->aliasMiddleware('request-logger', 'iMi\LaravelRequestLogger\LogRequest::class');
     }
 
     public function register()
