@@ -24,7 +24,7 @@ class LogRequest
     {
 
         if (! $this->isExceptRequest($request)) {
-            RequestLogEntry::create($this->getData());
+            RequestLogEntry::create($this->getData($request));
         }
 
         return $next($request);
@@ -33,7 +33,7 @@ class LogRequest
     /**
      * @return array
      */
-    protected function getData() : array
+    protected function getData($request) : array
     {
         return [
             'ip' => $request->getClientIp(),
