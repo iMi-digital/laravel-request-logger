@@ -39,7 +39,7 @@ class LogRequest
             'ip' => $request->getClientIp(),
             'path' => urldecode($request->path()),
             'method' => $request->getMethod(),
-            'agent' => $request->server('HTTP_USER_AGENT'),
+            'agent' => substr($request->server('HTTP_USER_AGENT'), 0, 191),
             'get' => $this->get($request),
             'post' => $this->post($request),
             'cookies' => $this->cookies($request),
