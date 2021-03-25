@@ -111,7 +111,7 @@ class LogRequest
      */
     protected function getExceptGet() : array
     {
-        return property_exists($this, 'exceptGet') ? $this->exceptGet : config('request-logger.except.get');
+        return property_exists($this, 'exceptGet') ? $this->exceptGet : config('request-logger.except.get', []);
     }
 
     /**
@@ -119,7 +119,7 @@ class LogRequest
      */
     protected function getExceptPost() : array
     {
-        return property_exists($this, 'exceptPost') ? $this->exceptPost : config('request-logger.except.post');
+        return property_exists($this, 'exceptPost') ? $this->exceptPost : config('request-logger.except.post', []);
     }
 
     /**
@@ -127,7 +127,7 @@ class LogRequest
      */
     protected function getExceptCookies() : array
     {
-        return property_exists($this, 'exceptCookies') ? $this->exceptCookies : config('request-logger.except.cookies');
+        return property_exists($this, 'exceptCookies') ? $this->exceptCookies : config('request-logger.except.cookies'. []);
     }
 
     /**
@@ -135,7 +135,7 @@ class LogRequest
      */
     public function getExceptUri() : array
     {
-        return property_exists($this, 'exceptUri') ? $this->exceptUri : config('request-logger.except.uri');
+        return property_exists($this, 'exceptUri') ? $this->exceptUri : config('request-logger.except.uri', []);
     }
 
     /**
