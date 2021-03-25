@@ -12,7 +12,8 @@ This module logs requests for following data to a database table.
 * cookies
 * agent
 
-It is possible to exclude certain private fields through configuration (contributed by [@AgelxNash](https://github.com/AgelxNash)) 
+It is possible to exclude certain private fields through configuration (contributed by [@AgelxNash](https://github.com/AgelxNash)).
+**By default, all session cookies and xsrf tokens are excluded from being logged.**
 
 Installation
 ------------
