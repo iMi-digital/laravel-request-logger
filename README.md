@@ -1,4 +1,4 @@
-Logs Requests for Laravel 5 Projects
+Logs Requests for Laravel Projects
 ===================================================================
 
 This module logs requests for following data to a database table.
