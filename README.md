@@ -18,9 +18,10 @@ It is possible to exclude certain private fields through configuration (contribu
 Installation
 ------------
 
-1. Install `imi/laravel-request-logger` via composer.
+1. Install `imi/laravel-request-logger` via composer with this command:
+       `composer require imi/laravel-request-logger -W`
 2. Optional - if your Laravel version does not yet support autodiscovery: Insert `iMi\LaravelRequestLogger\RequestLoggerServiceProvider::class` into providers in your config/app.php
-3. Use the middleware 'request-logger' => 'iMi\LaravelRequestLogger\LogRequest::class' for routes/route groups. If you want to log all reqests insert `iMi\LaravelRequestLogger\LogRequest::class` into middleware in your app/Http/Kernel.php
+3. Use the middleware 'request-logger' => 'iMi\LaravelRequestLogger\LogRequest::class' for routes/route groups. If you want to log all requests insert `iMi\LaravelRequestLogger\LogRequest::class` into middleware in your app/Http/Kernel.php, but not in routeMiddleware. 
 4. Call `php artisan migrate`
 
 Similar Modules
