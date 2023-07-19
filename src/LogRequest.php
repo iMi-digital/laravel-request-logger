@@ -127,7 +127,7 @@ class LogRequest
      */
     protected function getExceptCookies() : array
     {
-        return property_exists($this, 'exceptCookies') ? $this->exceptCookies : config('request-logger.except.cookies'. []);
+        return property_exists($this, 'exceptCookies') ? $this->exceptCookies : config('request-logger.except.cookies', []);
     }
 
     /**
