@@ -21,6 +21,6 @@
         }
     },
     "require": {
-      "doctrine/dbal": "^2.9"
+      "doctrine/dbal": "*"
     }
 }
