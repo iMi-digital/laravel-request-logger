@@ -4,6 +4,7 @@ namespace iMi\LaravelRequestLogger;
 
 use Closure;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 use Throwable;
 
 /**
@@ -152,7 +153,7 @@ class LogRequest
     protected function get($request) : ?array
     {
         return $this->export(
-            Arr::except($request->query->all(), $this->getExceptGet())
+            $this->except($request->query->all(), $this->getExceptGet())
         );
     }
 
@@ -163,7 +164,7 @@ class LogRequest
     protected function post($request) : ?array
     {
         return $this->export(
-            Arr::except($request->request->all(), $this->getExceptPost())
+            $this->except($request->request->all(), $this->getExceptPost())
         );
     }
 
@@ -174,8 +175,38 @@ class LogRequest
     protected function cookies($request) : ?array
     {
         return $this->export(
-            Arr::except($request->cookies->all(), $this->getExceptCookies())
+            $this->except($request->cookies->all(), $this->getExceptCookies())
         );
+    }
+
+    /**
+     * Drops the configured keys, additionally honouring shell style wildcards
+     * so that a family of keys can be excluded without naming each one -- a
+     * host may set session cookies the application does not know about and
+     * has no business logging (authelia_session on our review apps).
+     *
+     * Patterns without a wildcard keep going through Arr::except, so dot
+     * notation for nested keys behaves exactly as before.
+     *
+     * @param array $values
+     * @param array $patterns
+     * @return array
+     */
+    protected function except(array $values, array $patterns) : array
+    {
+        $values = Arr::except($values, $patterns);
+
+        $wildcards = array_filter($patterns, function ($pattern) {
+            return is_string($pattern) && strpos($pattern, '*') !== false;
+        });
+
+        if (count($wildcards) === 0) {
+            return $values;
+        }
+
+        return array_filter($values, function ($key) use ($wildcards) {
+            return ! Str::is($wildcards, $key);
+        }, ARRAY_FILTER_USE_KEY);
     }
 
     /**
