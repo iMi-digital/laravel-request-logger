@@ -17,6 +17,8 @@ class LogRequest
 {
     protected const BASE64_PREFIX = 'base64:';
 
+    protected const AGENT_COLUMN_LENGTH = 191;
+
     /**
      * Handle an incoming request.
      *
@@ -44,14 +46,47 @@ class LogRequest
     {
         return [
             'ip' => $request->getClientIp(),
-            'path' => urldecode($request->path()),
+            'path' => $this->encodeValue(urldecode($request->path())),
             'method' => $request->getMethod(),
-            'agent' => substr($request->server('HTTP_USER_AGENT'), 0, 191),
+            'agent' => $this->agent($request),
             'get' => $this->encodeBinary($this->get($request)),
             'post' => $this->encodeBinary($this->post($request)),
             'cookies' => $this->encodeBinary($this->cookies($request)),
             'session' => $this->session($request)
         ];
+    }
+
+    /**
+     * The user agent header is free form client input like everything else,
+     * so it goes through the same base64 marking as the json fields -- a
+     * binary agent otherwise fails the insert on utf8mb4 and the entry is
+     * lost.
+     *
+     * Truncation happens before encoding and counts characters, not bytes:
+     * the previous byte wise substr() could split a multi byte character in
+     * half and so turn a perfectly valid user agent into invalid UTF-8 all by
+     * itself. Values that need encoding are cut byte wise to the largest
+     * length whose encoded form still fits the column.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return string|null
+     */
+    protected function agent($request) : ?string
+    {
+        $agent = $request->server('HTTP_USER_AGENT');
+
+        if (! is_string($agent)) {
+            return null;
+        }
+
+        if (! $this->needsEncoding($agent)) {
+            return mb_substr($agent, 0, self::AGENT_COLUMN_LENGTH);
+        }
+
+        $prefixLength = strlen(self::BASE64_PREFIX);
+        $rawLimit = intdiv(self::AGENT_COLUMN_LENGTH - $prefixLength, 4) * 3;
+
+        return $this->encodeValue(substr($agent, 0, $rawLimit));
     }
 
     /**
