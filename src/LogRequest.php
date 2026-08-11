@@ -4,6 +4,7 @@ namespace iMi\LaravelRequestLogger;
 
 use Closure;
 use Illuminate\Support\Arr;
+use Throwable;
 
 /**
  * @property array $exceptUri
@@ -13,6 +14,8 @@ use Illuminate\Support\Arr;
  */
 class LogRequest
 {
+    protected const BASE64_PREFIX = 'base64:';
+
     /**
      * Handle an incoming request.
      *
@@ -22,9 +25,12 @@ class LogRequest
      */
     public function handle($request, Closure $next)
     {
-
-        if (! $this->isExceptRequest($request)) {
-            RequestLogEntry::create($this->getData($request));
+        try {
+            if (! $this->isExceptRequest($request)) {
+                RequestLogEntry::create($this->getData($request));
+            }
+        } catch (Throwable $exception) {
+            report($exception);
         }
 
         return $next($request);
@@ -40,11 +46,77 @@ class LogRequest
             'path' => urldecode($request->path()),
             'method' => $request->getMethod(),
             'agent' => substr($request->server('HTTP_USER_AGENT'), 0, 191),
-            'get' => $this->get($request),
-            'post' => $this->post($request),
-            'cookies' => $this->cookies($request),
+            'get' => $this->encodeBinary($this->get($request)),
+            'post' => $this->encodeBinary($this->post($request)),
+            'cookies' => $this->encodeBinary($this->cookies($request)),
             'session' => $this->session($request)
         ];
+    }
+
+    /**
+     * Everything logged here is raw client input, and a client is free to send
+     * bytes that are not valid UTF-8 - one mangled cookie value is enough to
+     * make the json cast of the log entry throw.
+     *
+     * Replacing those bytes would falsify exactly the data someone is reading
+     * the log for, so they are preserved in place, base64 encoded and marked
+     * with a "base64:" prefix:
+     *
+     *     ['ok' => 'value', 'sid' => 'base64:gKp0']
+     *
+     * A value that already starts with the literal prefix is encoded as well,
+     * so the marker stays unambiguous: "base64:foo" is stored as
+     * "base64:YmFzZTY0OmZvbw==". Decoding is always a single prefix strip
+     * plus base64_decode and returns the exact original bytes. Keys get the
+     * same treatment as values.
+     *
+     * @param array|null $data
+     * @return array|null
+     */
+    protected function encodeBinary($data) : ?array
+    {
+        if ($data === null) {
+            return null;
+        }
+
+        $encoded = [];
+
+        foreach ($data as $key => $value) {
+            $encodedKey = is_string($key) ? $this->encodeValue($key) : $key;
+
+            if (is_array($value)) {
+                $encoded[$encodedKey] = $this->encodeBinary($value);
+
+                continue;
+            }
+
+            $encoded[$encodedKey] = is_string($value) ? $this->encodeValue($value) : $value;
+        }
+
+        return $encoded;
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    protected function encodeValue(string $value) : string
+    {
+        if ($this->needsEncoding($value)) {
+            return self::BASE64_PREFIX . base64_encode($value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * @param string $value
+     * @return bool
+     */
+    protected function needsEncoding(string $value) : bool
+    {
+        return ! mb_check_encoding($value, 'UTF-8')
+            || strncmp($value, self::BASE64_PREFIX, strlen(self::BASE64_PREFIX)) === 0;
     }
 
     /**
